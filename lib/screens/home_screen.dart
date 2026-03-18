@@ -179,11 +179,10 @@ class _HomeScreenState extends State<HomeScreen>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Promo banner — Figma: no top gap, banner content at y:0
+                            // Promo banner
                             _fade(2, const PromoBanner()),
-                            const SizedBox(height: 16),
 
-                            // Filter tabs
+                            // Filter tabs — directly after banner dots
                             _fade(3, const FilterTabs()),
                             const SizedBox(height: 4),
 
