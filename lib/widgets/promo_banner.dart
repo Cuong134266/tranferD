@@ -19,10 +19,7 @@ class _PromoBannerState extends State<PromoBanner> {
       subtitle: 'Sang tay — không mất lãi',
       title: 'Lãi đến 13.5%/năm ✦',
     ),
-    _BannerData(
-      subtitle: 'Tiền gửi an toàn — lãi tự nhiên',
-      title: 'Sang tên trong 24 giờ',
-    ),
+    _BannerData(subtitle: 'Tiền gửi lãi cao', title: 'Săn sổ ngay!'),
     _BannerData(
       subtitle: 'Cần tiền gấp — bán sổ ngay',
       title: 'Nhận tiền ngay',
@@ -130,9 +127,9 @@ class _BannerCard extends StatelessWidget {
 
           // Text overlay — Figma: left:12, top:39, right clears illustration
           Positioned(
-            left: 12,
+            left: 16,
             top: 39,
-            right: 130, // leave space for illustration on right
+            right: 120, // leave space for illustration on right
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -140,9 +137,9 @@ class _BannerCard extends StatelessWidget {
                 Text(
                   data.subtitle,
                   style: GoogleFonts.beVietnamPro(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    height: 22 / 14,
+                    height: 18 / 12,
                     color: Colors.white.withAlpha(229),
                   ),
                   maxLines: 1,
@@ -151,9 +148,9 @@ class _BannerCard extends StatelessWidget {
                 Text(
                   data.title,
                   style: GoogleFonts.beVietnamPro(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    height: 32 / 20,
+                    height: 28 / 18,
                     color: Colors.white,
                   ),
                   maxLines: 1,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'theme/app_theme.dart';
-import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,7 @@ class TransferDApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: AppTheme.brandGreen,
       ),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }

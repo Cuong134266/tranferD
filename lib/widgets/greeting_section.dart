@@ -4,7 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class GreetingSection extends StatefulWidget {
-  const GreetingSection({super.key});
+  final VoidCallback? onSearchTap;
+  const GreetingSection({super.key, this.onSearchTap});
 
   @override
   State<GreetingSection> createState() => _GreetingSectionState();
@@ -23,7 +24,7 @@ class _GreetingSectionState extends State<GreetingSection> {
 
   int _phraseIndex = 0;
   String _displayed = ''; // currently shown characters
-  bool _isTyping = true;  // true = typing forward, false = erasing
+  bool _isTyping = true; // true = typing forward, false = erasing
 
   Timer? _timer;
 
@@ -45,9 +46,14 @@ class _GreetingSectionState extends State<GreetingSection> {
     _isTyping = true;
 
     _timer = Timer.periodic(_typeSpeed, (t) {
-      if (!mounted) { t.cancel(); return; }
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
       if (_displayed.length < fullText.length) {
-        setState(() => _displayed = fullText.substring(0, _displayed.length + 1));
+        setState(
+          () => _displayed = fullText.substring(0, _displayed.length + 1),
+        );
       } else {
         // Fully typed — pause then start erasing
         t.cancel();
@@ -61,9 +67,14 @@ class _GreetingSectionState extends State<GreetingSection> {
     _isTyping = false;
 
     _timer = Timer.periodic(_eraseSpeed, (t) {
-      if (!mounted) { t.cancel(); return; }
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
       if (_displayed.isNotEmpty) {
-        setState(() => _displayed = _displayed.substring(0, _displayed.length - 1));
+        setState(
+          () => _displayed = _displayed.substring(0, _displayed.length - 1),
+        );
       } else {
         // Fully erased — advance to next phrase
         t.cancel();
@@ -186,73 +197,76 @@ class _GreetingSectionState extends State<GreetingSection> {
             // ── Row 2: Search bar with typewriter placeholder ──
             // Figma: #ECEFF3 bg, radius:12, pad T8 R12 B8 L8
             GestureDetector(
-              onTap: () {},
-              child: Container(
-                height: 48,
-                padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFECEFF3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Avatar — 32×32, circle, #F0FFF4 bg
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF0FFF4),
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/img-ava.png',
-                          width: 32,
-                          height: 32,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.person,
-                            size: 20,
-                            color: Color(0xFF307A62),
+              behavior: HitTestBehavior.opaque,
+              onTap: widget.onSearchTap,
+              child: AbsorbPointer(
+                child: Container(
+                  height: 48,
+                  padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFFFFF),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFECEFF3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF0FFF4),
+                          shape: BoxShape.circle,
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/img-ava.png',
+                            width: 32,
+                            height: 32,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.person,
+                              size: 20,
+                              color: Color(0xFF307A62),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-
-                    // Typewriter text + blinking cursor
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              _displayed,
-                              style: GoogleFonts.beVietnamPro(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                height: 18 / 12,
-                                color: const Color(0xFF7A8DA3),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                _displayed,
+                                style: GoogleFonts.beVietnamPro(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  height: 18 / 12,
+                                  color: const Color(0xFF7A8DA3),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                             ),
-                          ),
-                          // Blinking cursor — shows while typing or pausing
-                          _BlinkingCursor(visible: _isTyping || _displayed.isEmpty),
-                        ],
+                            _BlinkingCursor(
+                              visible: _isTyping || _displayed.isEmpty,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(width: 4),
-                    // ic-send icon
-                    SvgPicture.asset(
-                      'assets/icons/ic-send.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ],
+                      const SizedBox(width: 4),
+                      SvgPicture.asset(
+                        'assets/icons/ic-send.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
