@@ -11,6 +11,7 @@ import '../widgets/deposit_card.dart';
 import '../widgets/skeleton_card.dart';
 import '../widgets/view_all_button.dart';
 import 'search_screen.dart';
+import 'post_listing_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -393,6 +394,21 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             );
                           },
+                          onPostTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => PostListingScreen(
+                                  data: const DepositCardData(
+                                    userName: 'Hoang Phu Ngoc Tuong',
+                                    description: 'Sổ tiết kiệm của tôi',
+                                    amount: '300,000,000 đ',
+                                    rate: '7.3%',
+                                    term: '12 tháng',
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -460,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen>
                   color: AppTheme.contentBackground,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

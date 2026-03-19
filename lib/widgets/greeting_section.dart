@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 class GreetingSection extends StatefulWidget {
   final VoidCallback? onSearchTap;
-  const GreetingSection({super.key, this.onSearchTap});
+  final VoidCallback? onPostTap; // tap icon → để đăng tin
+  const GreetingSection({super.key, this.onSearchTap, this.onPostTap});
 
   @override
   State<GreetingSection> createState() => _GreetingSectionState();
@@ -199,44 +200,45 @@ class _GreetingSectionState extends State<GreetingSection> {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: widget.onSearchTap,
-              child: AbsorbPointer(
-                child: Container(
-                  height: 48,
-                  padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFFECEFF3),
-                      width: 1,
-                    ),
+              child: Container(
+                height: 48,
+                padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFFFF),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFFECEFF3),
+                    width: 1,
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF0FFF4),
-                          shape: BoxShape.circle,
-                        ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            'assets/images/img-ava.png',
-                            width: 32,
-                            height: 32,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(
-                              Icons.person,
-                              size: 20,
-                              color: Color(0xFF307A62),
-                            ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF0FFF4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/img-ava.png',
+                          width: 32,
+                          height: 32,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.person,
+                            size: 20,
+                            color: Color(0xFF307A62),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
+                    ),
+                    const SizedBox(width: 10),
+                    // IgnorePointer chỉ cho phần text — outer GestureDetector xử lý
+                    Expanded(
+                      child: IgnorePointer(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -259,14 +261,22 @@ class _GreetingSectionState extends State<GreetingSection> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      SvgPicture.asset(
-                        'assets/icons/ic-send.svg',
-                        width: 24,
-                        height: 24,
+                    ),
+                    const SizedBox(width: 4),
+                    // Icon send — GestureDetector riêng, nhận tap độc lập
+                    GestureDetector(
+                      onTap: widget.onPostTap,
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: SvgPicture.asset(
+                          'assets/icons/ic-send.svg',
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

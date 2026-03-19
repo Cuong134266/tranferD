@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../screens/post_listing_screen.dart';
 
 /// Data model for deposit card
 class DepositCardData {
@@ -36,8 +37,14 @@ class DepositCardData {
 class DepositCard extends StatefulWidget {
   final DepositCardData data;
   final bool showDivider;
+  final VoidCallback? onReceiveTap;
 
-  const DepositCard({super.key, required this.data, this.showDivider = true});
+  const DepositCard({
+    super.key,
+    required this.data,
+    this.showDivider = true,
+    this.onReceiveTap,
+  });
 
   @override
   State<DepositCard> createState() => _DepositCardState();
@@ -406,7 +413,15 @@ class _DepositCardState extends State<DepositCard>
           ),
           // "Nhận" button — Figma: 58×26
           GestureDetector(
-            onTap: () {},
+            onTap: widget.onReceiveTap ??
+                () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          PostListingScreen(data: widget.data),
+                    ),
+                  );
+                },
             child: Container(
               height: 26,
               padding: const EdgeInsets.symmetric(horizontal: 13),

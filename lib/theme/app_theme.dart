@@ -32,6 +32,21 @@ class AppTheme {
   static const Color dividerColor = Color(0xFFE5E7EB);
   static const Color grayBg = Color(0xFFECEFF3);  // Figma #ECEFF3
 
+  // Post Listing Screen tokens
+  static const Color successSub = Color(0xFFEBFEF1);    // highlight/suggest box bg
+  static const Color successGreen = Color(0xFF39B16B);  // trending icon bg
+  static const Color surfaceSub = Color(0xFFF6F7F9);    // preview box bg
+  static const Color disabledBtnBg = Color(0xFFECEFF3); // disabled button bg
+  static const Color disabledBtnText = Color(0xFF95A8C1);// disabled button text
+  static const Color cardBorder = Color(0xFFDFE4EC);     // surface card border
+  static const Color thumbnailBg = Color(0xFFF5FED8);   // coin thumbnail bg
+  static const Color badgePillBg = Color(0xFFECEFF3);   // badge pill bg
+  static const Color inputGreen = Color(0xFF307A62);     // money input text
+  // Slider track gradient colors
+  static const Color sliderUptrend = Color(0xFF05B069);
+  static const Color sliderSideways = Color(0xFFF1C617);
+  static const Color sliderDowntrend = Color(0xFFE85F66);
+
   // === TEXT STYLES — font: Be Vietnam Pro (Figma primary font) ===
 
   // Greeting section
