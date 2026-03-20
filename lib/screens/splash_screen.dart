@@ -16,10 +16,10 @@ class _SplashScreenState extends State<SplashScreen> {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white,
       ),
     );
-
     Future.delayed(const Duration(milliseconds: 2000), _goHome);
   }
 
@@ -33,17 +33,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF012510),
-      body: SizedBox.expand(
-        child: Image.asset(
-          'assets/images/img-bg-splash.png',
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFC6F84C)),
-          ),
-        ),
-      ),
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: SizedBox.shrink(),
     );
   }
 }

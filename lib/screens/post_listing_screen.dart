@@ -38,15 +38,16 @@ class _PostListingScreenState extends State<PostListingScreen>
     super.initState();
 
     // Parse original amount from string (e.g. "300,000,000 đ")
-    final raw = widget.data.amount.replaceAll(',', '').replaceAll(' đ', '').trim();
+    final raw = widget.data.amount
+        .replaceAll(',', '')
+        .replaceAll(' đ', '')
+        .trim();
     final base = double.tryParse(raw) ?? 300000000;
     _minAmount = base;
     _maxAmount = base * 1.073;
     _selectedAmount = _minAmount + (_maxAmount - _minAmount) * _amountFraction;
 
-    _amountCtrl = TextEditingController(
-      text: _formatCurrency(_selectedAmount),
-    );
+    _amountCtrl = TextEditingController(text: _formatCurrency(_selectedAmount));
     _amountFocus = FocusNode();
     _amountFocus.addListener(() {
       if (_amountFocus.hasFocus) {
@@ -124,7 +125,8 @@ class _PostListingScreenState extends State<PostListingScreen>
   double get _receiverAmount => _selectedAmount * 1.01503;
 
   // Profit compared to early termination
-  double get _profitAmount => _selectedAmount - _minAmount + (_minAmount * 0.013);
+  double get _profitAmount =>
+      _selectedAmount - _minAmount + (_minAmount * 0.013);
 
   bool get _canContinue => _amountFraction > 0.0;
 
@@ -296,27 +298,37 @@ class _PostListingScreenState extends State<PostListingScreen>
                     Text(
                       '#Tiền gửi số',
                       style: GoogleFonts.beVietnamPro(
-                        fontSize: 12, fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
                         height: 18 / 12,
-                        color: const Color(0xFF307A62)),
+                        color: const Color(0xFF307A62),
+                      ),
                     ),
                     const SizedBox(height: 4),
-                    // Amount — Figma: 18px Medium #01250f, ₫ ngay sau số
+                    // Amount — Figma: 16px SemiBold #01250f, ₫ ngay sau số
                     RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: _formatCurrency(_minAmount),
-                          style: GoogleFonts.beVietnamPro(
-                            fontSize: 18, fontWeight: FontWeight.w500,
-                            height: 1.4,
-                            color: const Color(0xFF01250F))),
-                        TextSpan(
-                          text: ' ₫',
-                          style: GoogleFonts.beVietnamPro(
-                            fontSize: 18, fontWeight: FontWeight.w500,
-                            height: 1.4,
-                            color: const Color(0xFF01250F))),
-                      ]),
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: _formatCurrency(_minAmount),
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
+                              color: const Color(0xFF01250F),
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' ₫',
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
+                              color: const Color(0xFF01250F),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 4),
                     // Badges: "12 tháng" (gray) + "7.3%/năm" (green)
@@ -358,62 +370,66 @@ class _PostListingScreenState extends State<PostListingScreen>
 
           const SizedBox(height: 12),
 
-          // Row: "Người nhận thanh toán" + amount + chevron toggle
-          GestureDetector(
-            onTap: () => setState(() => _isExpanded = !_isExpanded),
-            behavior: HitTestBehavior.opaque,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Người nhận thanh toán',
-                  style: GoogleFonts.beVietnamPro(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    height: 18 / 12,
-                    color: const Color(0xFF495463),
+          // Collapsed: "Người nhận thanh toán" row + insight
+          // Expanded: Phí details + chart panel
+          AnimatedSize(
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: AnimatedCrossFade(
+              duration: const Duration(milliseconds: 300),
+              sizeCurve: Curves.easeInOut,
+              firstCurve: Curves.easeIn,
+              secondCurve: Curves.easeOut,
+              crossFadeState: _isExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              firstChild: Column(
+                children: [
+                  // "Người nhận thanh toán" collapsed row
+                  GestureDetector(
+                    onTap: () => setState(() => _isExpanded = true),
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Người nhận thanh toán',
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              height: 18 / 12,
+                              color: const Color(0xFF495463),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            '${_formatCurrency(_receiverAmount)} ₫',
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              height: 24 / 16,
+                              color: AppTheme.textDark,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            size: 20,
+                            color: AppTheme.textDark,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Text(
-                  '${_formatCurrency(_receiverAmount)} ₫',
-                  style: GoogleFonts.beVietnamPro(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 16,
-                    color: AppTheme.textDark,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                AnimatedRotation(
-                  turns: _isExpanded ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 250),
-                  child: const Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 20,
-                    color: AppTheme.textDark,
-                  ),
-                ),
-              ],
+                  // Insight box
+                  _buildInsightBox(),
+                ],
+              ),
+              secondChild: _buildExpandedPanel(),
             ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Expand panel (Phí + kịch bản)
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (child, anim) =>
-                FadeTransition(opacity: anim, child: child),
-            child: _isExpanded
-                ? SizedBox(
-                    key: const ValueKey('expanded'),
-                    width: double.infinity,
-                    child: _buildExpandedPanel())
-                : SizedBox(
-                    key: const ValueKey('insight'),
-                    width: double.infinity,
-                    child: _buildInsightBox()),
           ),
         ],
       ),
@@ -452,10 +468,10 @@ class _PostListingScreenState extends State<PostListingScreen>
                   textAlign: TextAlign.center,
                   inputFormatters: [CurrencyInputFormatter()],
                   style: GoogleFonts.beVietnamPro(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w600,
-                    height: 40 / 30,
-                    letterSpacing: -1.2,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w500,
+                    height: 36 / 28,
+                    letterSpacing: -1.0,
                     color: AppTheme.inputGreen,
                   ),
                   decoration: const InputDecoration(
@@ -464,15 +480,17 @@ class _PostListingScreenState extends State<PostListingScreen>
                     contentPadding: EdgeInsets.zero,
                   ),
                   onChanged: (val) {
-                    final raw =
-                        val.replaceAll(',', '').replaceAll('.', '').trim();
+                    final raw = val
+                        .replaceAll(',', '')
+                        .replaceAll('.', '')
+                        .trim();
                     final typed = double.tryParse(raw);
                     if (typed != null) {
                       final clamped = typed.clamp(_minAmount, _maxAmount);
                       setState(() {
                         _selectedAmount = clamped;
-                        _amountFraction = (clamped - _minAmount) /
-                            (_maxAmount - _minAmount);
+                        _amountFraction =
+                            (clamped - _minAmount) / (_maxAmount - _minAmount);
                       });
                     }
                   },
@@ -486,10 +504,10 @@ class _PostListingScreenState extends State<PostListingScreen>
               Text(
                 '₫',
                 style: GoogleFonts.beVietnamPro(
-                  fontSize: 30,
+                  fontSize: 28,
                   fontWeight: FontWeight.w400,
-                  height: 40 / 30,
-                  letterSpacing: -1.2,
+                  height: 36 / 28,
+                  letterSpacing: -1.0,
                   color: AppTheme.textSecondary,
                 ),
               ),
@@ -507,33 +525,31 @@ class _PostListingScreenState extends State<PostListingScreen>
             Text(
               '${_formatCurrency(_minAmount)} ₫',
               style: GoogleFonts.beVietnamPro(
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w400,
-                height: 14 / 10,
+                height: 16 / 12,
                 color: AppTheme.textSecondary,
               ),
             ),
             Text(
               '${_formatCurrency(_maxAmount)} ₫',
               style: GoogleFonts.beVietnamPro(
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w400,
-                height: 14 / 10,
+                height: 16 / 12,
                 color: AppTheme.textSecondary,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 4), // 4px gap (Figma spacing.xxs)
+        const SizedBox(height: 0), // test 0px
         // Gradient slider
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackHeight: 12,
             trackShape: GradientSliderTrackShape(sliderValue: _amountFraction),
             thumbColor: Colors.white,
-            thumbShape: const RoundSliderThumbShape(
-              enabledThumbRadius: 9,
-            ),
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 9),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
             overlayColor: AppTheme.inputGreen.withValues(alpha: 0.15),
             activeTickMarkColor: Colors.transparent,
@@ -607,7 +623,8 @@ class _PostListingScreenState extends State<PostListingScreen>
                   TextSpan(
                     text: ' (~ ${widget.data.rate}/năm)',
                     style: GoogleFonts.beVietnamPro(
-                      fontSize: 12, fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
                       height: 18 / 12,
                       color: AppTheme.successGreen,
                     ),
@@ -625,8 +642,8 @@ class _PostListingScreenState extends State<PostListingScreen>
   // ── Expanded detail panel ── (Figma node 61-4643)
   Widget _buildExpandedPanel() {
     // _minAmount = sổ gốc (principal)
-    final feeTransfer = _minAmount * 0.0008;          // 0.08% sổ gốc
-    final earlySettleInterest = _minAmount * 0.0005;  // 0.05% sổ gốc
+    final feeTransfer = _minAmount * 0.0008; // 0.08% sổ gốc
+    final earlySettleInterest = _minAmount * 0.0005; // 0.05% sổ gốc
     const feeListing = 3000.0;
     final receiverAfterFee = _receiverAmount - feeTransfer - feeListing;
     // Chart values (Figma: chuyển nhượng = receiverAfterFee, tất toán = minAmount + interest)
@@ -635,14 +652,23 @@ class _PostListingScreenState extends State<PostListingScreen>
 
     // Figma text styles
     final ls = GoogleFonts.beVietnamPro(
-      fontSize: 12, fontWeight: FontWeight.w400,
-      height: 18 / 12, color: const Color(0xFF495463));
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      height: 20 / 14,
+      color: const Color(0xFF495463),
+    );
     final fv = GoogleFonts.beVietnamPro(
-      fontSize: 12, fontWeight: FontWeight.w500,
-      height: 18 / 12, color: const Color(0xFF01250F));
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 20 / 14,
+      color: const Color(0xFF01250F),
+    );
     final rv = GoogleFonts.beVietnamPro(
-      fontSize: 16, fontWeight: FontWeight.w500,
-      height: 24 / 16, color: const Color(0xFF01250F));
+      fontSize: 24,
+      fontWeight: FontWeight.w700,
+      height: 32 / 24,
+      color: const Color(0xFF01250F),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -652,8 +678,11 @@ class _PostListingScreenState extends State<PostListingScreen>
           children: [
             Text('Phí chuyển nhượng', style: ls),
             const SizedBox(width: 4),
-            const Icon(Icons.info_outline_rounded,
-              size: 16, color: Color(0xFF7A8DA3)),
+            const Icon(
+              Icons.info_outline_rounded,
+              size: 16,
+              color: Color(0xFF7A8DA3),
+            ),
             const Expanded(child: SizedBox()),
             Text('${_formatCurrency(feeTransfer)} ₫', style: fv),
           ],
@@ -661,11 +690,13 @@ class _PostListingScreenState extends State<PostListingScreen>
         const SizedBox(height: 12),
 
         // ── Phí đăng tin ──
-        Row(children: [
-          Text('Phí đăng tin', style: ls),
-          const Expanded(child: SizedBox()),
-          Text('${_formatCurrency(feeListing)} ₫', style: fv),
-        ]),
+        Row(
+          children: [
+            Text('Phí đăng tin', style: ls),
+            const Expanded(child: SizedBox()),
+            Text('${_formatCurrency(feeListing)} ₫', style: fv),
+          ],
+        ),
         const SizedBox(height: 12),
 
         // ── Dashed divider ──
@@ -689,7 +720,8 @@ class _PostListingScreenState extends State<PostListingScreen>
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: const Color(0xFFEBFEF1),
-            borderRadius: BorderRadius.circular(8)),
+            borderRadius: BorderRadius.circular(8),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -699,54 +731,53 @@ class _PostListingScreenState extends State<PostListingScreen>
                 children: [
                   // Green circle trending-up icon
                   Container(
-                    width: 20, height: 20,
+                    width: 20,
+                    height: 20,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF39B16B), shape: BoxShape.circle),
+                      color: Color(0xFF39B16B),
+                      shape: BoxShape.circle,
+                    ),
                     child: const Center(
-                      child: Icon(Icons.trending_up_rounded,
-                          size: 13, color: Colors.white))),
+                      child: Icon(
+                        Icons.trending_up_rounded,
+                        size: 13,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Row: "Lời hơn 4.1Tr" + "(Thực nhận 7.2%/năm)"
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            RichText(
-                              text: TextSpan(children: [
-                                TextSpan(
-                                  text: 'Lời hơn ',
-                                  style: GoogleFonts.beVietnamPro(
-                                    fontSize: 12, height: 18 / 12,
-                                    color: const Color(0xFF01250F))),
-                                TextSpan(
-                                  text: ' ${_formatShort(_profitAmount)}',
-                                  style: GoogleFonts.beVietnamPro(
-                                    fontSize: 14, fontWeight: FontWeight.w600,
-                                    height: 22 / 14,
-                                    color: const Color(0xFF39B16B))),
-                              ])),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                '(Thực nhận ${widget.data.rate}/năm)',
-                                style: GoogleFonts.beVietnamPro(
-                                  fontSize: 10, fontWeight: FontWeight.w600,
-                                  height: 14 / 10,
-                                  color: const Color(0xFF39B16B)),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                    child: RichText(
+                      text: TextSpan(
+                        style: GoogleFonts.beVietnamPro(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 18 / 12,
+                          color: AppTheme.textDark,
                         ),
-                        // Row 2: "so với tất toán trước hạn"
-                        Text('so với tất toán trước hạn',
-                          style: GoogleFonts.beVietnamPro(
-                            fontSize: 12, height: 18 / 12,
-                            color: const Color(0xFF01250F))),
-                      ],
+                        children: [
+                          const TextSpan(text: 'Lời '),
+                          TextSpan(
+                            text: _formatShort(_profitAmount),
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              height: 22 / 14,
+                              color: const Color(0xFF39B16B),
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' (~ ${widget.data.rate}/năm)',
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              height: 18 / 12,
+                              color: const Color(0xFF39B16B),
+                            ),
+                          ),
+                          const TextSpan(text: ' so với tất toán'),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -761,39 +792,57 @@ class _PostListingScreenState extends State<PostListingScreen>
                   children: [
                     // Labels column (left)
                     Positioned(
-                      left: 0, top: 0, right: 110,
+                      left: 0,
+                      top: 0,
+                      right: 110,
                       bottom: 0,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           // Row 1: label + dashed line
-                          Text('Nếu chuyển nhượng',
+                          Text(
+                            'Nếu chuyển nhượng',
                             style: GoogleFonts.beVietnamPro(
-                              fontSize: 10, height: 14 / 10,
-                              color: const Color(0xFF7A8DA3))),
+                              fontSize: 10,
+                              height: 14 / 10,
+                              color: const Color(0xFF7A8DA3),
+                            ),
+                          ),
                           const SizedBox(height: 2),
                           const _DashedDivider(),
                           const SizedBox(height: 4),
-                          Text('${_formatCurrency(valTransfer)} ₫',
+                          Text(
+                            '${_formatCurrency(valTransfer)} ₫',
                             style: GoogleFonts.beVietnamPro(
-                              fontSize: 14, fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                               height: 22 / 14,
-                              color: const Color(0xFF01250F))),
+                              color: const Color(0xFF01250F),
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           // Row 2: label + dashed line
-                          Text('Nếu tất toán trước hạn',
+                          Text(
+                            'Nếu tất toán trước hạn',
                             style: GoogleFonts.beVietnamPro(
-                              fontSize: 10, height: 14 / 10,
-                              color: const Color(0xFF7A8DA3))),
+                              fontSize: 10,
+                              height: 14 / 10,
+                              color: const Color(0xFF7A8DA3),
+                            ),
+                          ),
                           const SizedBox(height: 2),
                           const _DashedDivider(),
                           const SizedBox(height: 4),
-                          Text('${_formatCurrency(valEarlySettle)} ₫',
+                          Text(
+                            '${_formatCurrency(valEarlySettle)} ₫',
                             style: GoogleFonts.beVietnamPro(
-                              fontSize: 14, fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                               height: 22 / 14,
-                              color: const Color(0xFF01250F))),
+                              color: const Color(0xFF01250F),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -807,19 +856,29 @@ class _PostListingScreenState extends State<PostListingScreen>
                         children: [
                           // Bar 1: tất toán (gray, 60px, rounded top)
                           Container(
-                            width: 40, height: 60,
+                            width: 40,
+                            height: 60,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF7A8DA3).withValues(alpha: 0.25),
+                              color: const Color(
+                                0xFF7A8DA3,
+                              ).withValues(alpha: 0.25),
                               borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(4)))),
+                                top: Radius.circular(4),
+                              ),
+                            ),
+                          ),
                           const SizedBox(width: 4),
                           // Bar 2: chuyển nhượng (green, 91px, rounded top)
                           Container(
-                            width: 40, height: 91,
+                            width: 40,
+                            height: 91,
                             decoration: const BoxDecoration(
                               color: Color(0xFF39B16B),
                               borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(4)))),
+                                top: Radius.circular(4),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -832,8 +891,12 @@ class _PostListingScreenState extends State<PostListingScreen>
               Text(
                 'Thông tin tính toán dựa trên tham khảo biểu lãi suất tiền gửi hiện tại của MB',
                 style: GoogleFonts.beVietnamPro(
-                  fontSize: 10, fontStyle: FontStyle.italic,
-                  height: 14 / 10, color: const Color(0xFF7A8DA3))),
+                  fontSize: 10,
+                  fontStyle: FontStyle.italic,
+                  height: 14 / 10,
+                  color: const Color(0xFF7A8DA3),
+                ),
+              ),
             ],
           ),
         ),
@@ -845,20 +908,27 @@ class _PostListingScreenState extends State<PostListingScreen>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Thu gọn',
+              Text(
+                'Thu gọn',
                 style: GoogleFonts.beVietnamPro(
-                  fontSize: 12, fontWeight: FontWeight.w600,
-                  height: 18 / 12, color: const Color(0xFF307A62))),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  height: 18 / 12,
+                  color: const Color(0xFF307A62),
+                ),
+              ),
               const SizedBox(width: 4),
-              const Icon(Icons.keyboard_arrow_up_rounded,
-                size: 16, color: Color(0xFF307A62)),
+              const Icon(
+                Icons.keyboard_arrow_up_rounded,
+                size: 16,
+                color: Color(0xFF307A62),
+              ),
             ],
           ),
         ),
       ],
     );
   }
-
 
   // ───────────────────────────────────────────────
   // SECTION 2: SUGGEST BOX
@@ -1318,11 +1388,7 @@ class _DashedLinePainter extends CustomPainter {
     const dashSpace = 4.0;
     double x = 0;
     while (x < size.width) {
-      canvas.drawLine(
-        Offset(x, 0),
-        Offset(x + dashWidth, 0),
-        paint,
-      );
+      canvas.drawLine(Offset(x, 0), Offset(x + dashWidth, 0), paint);
       x += dashWidth + dashSpace;
     }
   }

@@ -119,8 +119,8 @@ class _BannerCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
                 'assets/images/img-banner.png',
-                fit: BoxFit.cover,
-                alignment: Alignment.bottomLeft,
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.center,
               ),
             ),
           ),
