@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../widgets/deposit_card.dart';
 import '../widgets/custom_slider_track.dart';
+import 'config_params_screen.dart';
 
 class PostListingScreen extends StatefulWidget {
   final DepositCardData data;
@@ -153,13 +154,13 @@ class _PostListingScreenState extends State<PostListingScreen>
 
   // ── Interest rate comparison logic ──
   // Lãi suất mở mới 6 tháng hiện tại
-  static const double _newDepositRate = 6.2; // %/năm
+  double _newDepositRate = 6.2; // %/năm
   // Lãi suất sổ hiện tại (12 tháng)
-  static const double _currentRate = 8.4; // %/năm
+  double _currentRate = 8.4; // %/năm
   // Kỳ hạn còn lại (giả sử 6 tháng)
-  static const int _remainingMonths = 6;
+  int _remainingMonths = 6;
   // Kỳ hạn gốc của sổ (12 tháng)
-  static const int _totalTermMonths = 12;
+  int _totalTermMonths = 12;
 
   // Tổng gốc + lãi cuối kỳ của sổ (dùng kỳ hạn gốc 12 tháng)
   double get _maturityAmount =>
@@ -176,6 +177,19 @@ class _PostListingScreenState extends State<PostListingScreen>
   }
 
   bool get _isEasyTransfer => _transferDiff > 0;
+
+  // ── Recalculate all derived amounts after config change ──
+  void _recalculateAmounts() {
+    final principal = _principal;
+    final nonTermInterest = principal * 0.0005;
+    const listingFee = 3000.0;
+    final fullTermInterest = principal * (_currentRate / 100) * (_totalTermMonths / 12);
+
+    _minAmount = principal + nonTermInterest + listingFee;
+    _maxAmount = principal + fullTermInterest - 0.001 * principal;
+    _selectedAmount = _minAmount + (_maxAmount - _minAmount) * _amountFraction;
+    _amountCtrl.text = _formatCurrency(_selectedAmount);
+  }
 
   // ── Amount validation ──
   String? get _amountError {
@@ -1486,8 +1500,28 @@ class _PostListingScreenState extends State<PostListingScreen>
               // Primary button
               GestureDetector(
                 onTap: isEnabled
-                    ? () {
-                        // Navigate to next screen / confirmation
+                    ? () async {
+                        final result = await Navigator.of(context).push<ConfigParams>(
+                          MaterialPageRoute(
+                            builder: (_) => ConfigParamsScreen(
+                              principal: _principal,
+                              originalRate: _currentRate,
+                              totalTermMonths: _totalTermMonths,
+                              remainingMonths: _remainingMonths,
+                              newOpeningRate: _newDepositRate,
+                            ),
+                          ),
+                        );
+                        if (result != null && mounted) {
+                          setState(() {
+                            _principal = result.principal;
+                            _currentRate = result.originalRate;
+                            _totalTermMonths = result.totalTermMonths;
+                            _remainingMonths = result.remainingMonths;
+                            _newDepositRate = result.newOpeningRate;
+                            _recalculateAmounts();
+                          });
+                        }
                       }
                     : null,
                 child: AnimatedContainer(
