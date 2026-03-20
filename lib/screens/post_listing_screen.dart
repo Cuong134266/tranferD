@@ -153,7 +153,7 @@ class _PostListingScreenState extends State<PostListingScreen>
 
   // ── Interest rate comparison logic ──
   // Lãi suất mở mới 6 tháng hiện tại
-  static const double _newDepositRate = 7.2; // %/năm
+  static const double _newDepositRate = 6.2; // %/năm
   // Lãi suất sổ hiện tại (12 tháng)
   static const double _currentRate = 8.4; // %/năm
   // Kỳ hạn còn lại (giả sử 6 tháng)

@@ -157,10 +157,7 @@ class CustomThumbShape extends SliderComponentShape {
   // Figma stroke color & fill color: rgba(48,122,98,1)
   static const Color _green = Color(0xFF307A62);
 
-  const CustomThumbShape({
-    this.outerRadius = 9.0,
-    this.innerRadius = 5.0,
-  });
+  const CustomThumbShape({this.outerRadius = 9.0, this.innerRadius = 5.0});
 
   @override
   Size getPreferredSize(bool isEnabled, bool isInteractive) =>
@@ -210,7 +207,7 @@ class CustomThumbShape extends SliderComponentShape {
   }
 }
 
-/// Labels bên dưới slider track, căn theo vị trí dot 30% và 70%
+/// Labels bên dưới slider track, căn theo vị trí dot 30% và 60%
 /// Dot thực được vẽ trên Canvas trong GradientSliderTrackShape
 class SliderMarkersRow extends StatelessWidget {
   final double sliderValue;
@@ -222,7 +219,7 @@ class SliderMarkersRow extends StatelessWidget {
       builder: (context, constraints) {
         final double w = constraints.maxWidth;
         const double dot1Frac = 0.30;
-        const double dot2Frac = 0.70;
+        const double dot2Frac = 0.60;
 
         return SizedBox(
           height: 18,
@@ -238,7 +235,7 @@ class SliderMarkersRow extends StatelessWidget {
                   active: sliderValue >= dot1Frac,
                 ),
               ),
-              // Label "Lãi cao hơn" căn giữa tại 70%
+              // Label "Lãi cao hơn" căn giữa tại 60%
               Positioned(
                 left: w * dot2Frac,
                 top: 0,
