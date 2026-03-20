@@ -47,6 +47,11 @@ class AppTheme {
   static const Color sliderSideways = Color(0xFFF1C617);
   static const Color sliderDowntrend = Color(0xFFE85F66);
 
+  // Danger / Error state (for "Khó chuyển nhượng")
+  static const Color dangerSub = Color(0xFFFDE9ED);      // pink bg
+  static const Color dangerRed = Color(0xFFEB2D4B);       // red accent badge/text
+  static const Color errorText = Color(0xFFE53935);       // error messages
+
   // === TEXT STYLES — font: Be Vietnam Pro (Figma primary font) ===
 
   // Greeting section

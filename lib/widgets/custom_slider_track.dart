@@ -133,11 +133,7 @@ class GradientSliderTrackShape extends SliderTrackShape {
     final Offset center = Offset(cx, centerY);
 
     // Fill: trắng
-    canvas.drawCircle(
-      center,
-      _dotRadius,
-      Paint()..color = Colors.white,
-    );
+    canvas.drawCircle(center, _dotRadius, Paint()..color = Colors.white);
 
     // Border: màu theo trạng thái
     canvas.drawCircle(
@@ -148,6 +144,69 @@ class GradientSliderTrackShape extends SliderTrackShape {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
+  }
+}
+
+/// Custom thumb shape — khớp Figma node 73:2075
+/// Frame 18×18 (white fill + #307A62 stroke) + Ellipse 10×10 (#307A62 fill)
+class CustomThumbShape extends SliderComponentShape {
+  // Figma: Frame 18×18 → bán kính 9
+  final double outerRadius;
+  // Figma: Ellipse 10×10 → bán kính 5
+  final double innerRadius;
+  // Figma stroke color & fill color: rgba(48,122,98,1)
+  static const Color _green = Color(0xFF307A62);
+
+  const CustomThumbShape({
+    this.outerRadius = 9.0,
+    this.innerRadius = 5.0,
+  });
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isInteractive) =>
+      Size.fromRadius(outerRadius);
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final canvas = context.canvas;
+
+    // Drop shadow
+    canvas.drawCircle(
+      center.translate(0, 1),
+      outerRadius,
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.18)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+    );
+
+    // Vòng ngoài: white fill
+    canvas.drawCircle(center, outerRadius, Paint()..color = Colors.white);
+
+    // Viền ngoài: #307A62, strokeWidth = 1.5 (Figma default stroke)
+    canvas.drawCircle(
+      center,
+      outerRadius,
+      Paint()
+        ..color = _green
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+
+    // Vòng trong: #307A62 fill (Ellipse 10×10 → r=5)
+    canvas.drawCircle(center, innerRadius, Paint()..color = _green);
   }
 }
 
@@ -210,15 +269,19 @@ class _MarkerLabel extends StatelessWidget {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'Be Vietnam Pro',
-          fontSize: 10,
+          fontSize: 12,
           fontWeight: FontWeight.w400,
           height: 1.4,
           color: active
-              ? const Color(0xFF495463) // text-color/sub-4 khi đã qua
+              ? const ui.Color.fromARGB(
+                  255,
+                  43,
+                  49,
+                  58,
+                ) // text-color/sub-4 khi đã qua
               : const Color(0xFFB5C1D3), // text-color/sub-2 mặc định
         ),
       ),
     );
   }
 }
-
