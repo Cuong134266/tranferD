@@ -2,16 +2,16 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
-/// Custom track shape: gradient 3 màu + 2 dots tại 30% và 70%
+/// Custom track shape: gradient 3 màu + 2 dots tại 30% và 60%
 /// Dot tại 30%: "Nhận tiền nhanh" — white fill + green border khi thumb vượt qua
-/// Dot tại 70%: "Lãi cao hơn" — white fill + yellow border khi thumb vượt qua
+/// Dot tại 60%: "Lãi cao hơn" — white fill + yellow border khi thumb vượt qua
 class GradientSliderTrackShape extends SliderTrackShape {
   final double sliderValue; // 0.0 → 1.0, để tô màu dot
 
   const GradientSliderTrackShape({this.sliderValue = 0.0});
 
   static const double _dot1Frac = 0.30; // 30%
-  static const double _dot2Frac = 0.70; // 70%
+  static const double _dot2Frac = 0.60; // 60%
   static const double _dotRadius = 4.0; // 8×8 dot
 
   @override
@@ -64,7 +64,7 @@ class GradientSliderTrackShape extends SliderTrackShape {
           AppTheme.sliderSideways.withValues(alpha: 0.20),
           AppTheme.sliderDowntrend.withValues(alpha: 0.20),
         ],
-        [0.0, 0.7381, 1.0],
+        [0.0, 0.60, 1.0],
       );
     context.canvas.drawRRect(rRect, bgPaint);
 
@@ -91,12 +91,12 @@ class GradientSliderTrackShape extends SliderTrackShape {
             AppTheme.sliderSideways,
             AppTheme.sliderDowntrend,
           ],
-          [0.0, 0.7381, 1.0],
+          [0.0, 0.60, 1.0],
         );
       context.canvas.drawRRect(activeRRect, activePaint);
     }
 
-    // ── Dots tại 30% và 70% ──
+    // ── Dots tại 30% và 60% ──
     final double trackCenterY = trackRect.top + trackRect.height / 2;
 
     _drawDot(
