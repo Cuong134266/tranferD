@@ -385,11 +385,14 @@ class _HomeScreenState extends State<HomeScreen>
                           onSearchTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => SearchScreen(
-                                  allCards: [
-                                    ..._featuredCards,
-                                    ..._generateAllCards(),
-                                  ],
+                                builder: (_) => PostListingScreen(
+                                  data: const DepositCardData(
+                                    userName: 'Hoang Phu Ngoc Tuong',
+                                    description: 'Sổ tiết kiệm của tôi',
+                                    amount: '300,000,000 đ',
+                                    rate: '7.3%',
+                                    term: '12 tháng',
+                                  ),
                                 ),
                               ),
                             );
