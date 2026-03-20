@@ -53,7 +53,8 @@ class _PostListingScreenState extends State<PostListingScreen>
     // Phí đăng tin
     const listingFee = 3000.0;
     // Lãi đến hạn = gốc × lãi suất hiện tại × (kỳ hạn gốc/12)
-    final fullTermInterest = principal * (_currentRate / 100) * (_totalTermMonths / 12);
+    final fullTermInterest =
+        principal * (_currentRate / 100) * (_totalTermMonths / 12);
 
     _principal = principal;
     _minAmount = principal + nonTermInterest + listingFee;
@@ -135,8 +136,7 @@ class _PostListingScreenState extends State<PostListingScreen>
   }
 
   // Người nhận thanh toán = số tiền nhập + phí chuyển nhượng + phí đăng tin
-  double get _receiverAmount =>
-      _selectedAmount + (_principal * 0.01) + 3000;
+  double get _receiverAmount => _selectedAmount + (_principal * 0.01) + 3000;
 
   // Số tiền tất toán trước hạn = gốc + lãi không kỳ hạn 0.05%
   double get _earlySettleAmount => _principal * 1.0005;
@@ -172,7 +172,8 @@ class _PostListingScreenState extends State<PostListingScreen>
   // Nếu A - B > 0 → dễ chuyển, < 0 → khó chuyển
   double get _transferDiff {
     final a = _maturityAmount - _selectedAmount;
-    final b = _selectedAmount * (_newDepositRate / 100) * (_remainingMonths / 12);
+    final b =
+        _selectedAmount * (_newDepositRate / 100) * (_remainingMonths / 12);
     return a - b;
   }
 
@@ -183,7 +184,8 @@ class _PostListingScreenState extends State<PostListingScreen>
     final principal = _principal;
     final nonTermInterest = principal * 0.0005;
     const listingFee = 3000.0;
-    final fullTermInterest = principal * (_currentRate / 100) * (_totalTermMonths / 12);
+    final fullTermInterest =
+        principal * (_currentRate / 100) * (_totalTermMonths / 12);
 
     _minAmount = principal + nonTermInterest + listingFee;
     _maxAmount = principal + fullTermInterest - 0.001 * principal;
@@ -453,60 +455,60 @@ class _PostListingScreenState extends State<PostListingScreen>
             alignment: Alignment.topCenter,
             child: ClipRect(
               child: AnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              sizeCurve: Curves.easeInOut,
-              firstCurve: Curves.easeIn,
-              secondCurve: Curves.easeOut,
-              crossFadeState: _isExpanded
-                  ? CrossFadeState.showSecond
-                  : CrossFadeState.showFirst,
-              firstChild: Column(
-                children: [
-                  // "Người nhận thanh toán" collapsed row
-                  GestureDetector(
-                    onTap: () => setState(() => _isExpanded = true),
-                    behavior: HitTestBehavior.opaque,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Người nhận thanh toán',
-                              style: GoogleFonts.beVietnamPro(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                height: 18 / 12,
-                                color: const Color(0xFF495463),
+                duration: const Duration(milliseconds: 300),
+                sizeCurve: Curves.easeInOut,
+                firstCurve: Curves.easeIn,
+                secondCurve: Curves.easeOut,
+                crossFadeState: _isExpanded
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                firstChild: Column(
+                  children: [
+                    // "Người nhận thanh toán" collapsed row
+                    GestureDetector(
+                      onTap: () => setState(() => _isExpanded = true),
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Người nhận thanh toán',
+                                style: GoogleFonts.beVietnamPro(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  height: 18 / 12,
+                                  color: const Color(0xFF495463),
+                                ),
                               ),
                             ),
-                          ),
-                          Text(
-                            '${_formatCurrency(_receiverAmount)} ₫',
-                            style: GoogleFonts.beVietnamPro(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              height: 24 / 16,
+                            Text(
+                              '${_formatCurrency(_receiverAmount)} ₫',
+                              style: GoogleFonts.beVietnamPro(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                height: 24 / 16,
+                                color: AppTheme.textDark,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 20,
                               color: AppTheme.textDark,
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            size: 20,
-                            color: AppTheme.textDark,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  // Insight box
-                  _buildInsightBox(),
-                ],
+                    // Insight box
+                    _buildInsightBox(),
+                  ],
+                ),
+                secondChild: _buildExpandedPanel(),
               ),
-              secondChild: _buildExpandedPanel(),
-            ),
             ),
           ),
         ],
@@ -617,27 +619,38 @@ class _PostListingScreenState extends State<PostListingScreen>
         // Dynamic amount suggestions (only when focused & has input)
         if (_amountFocus.hasFocus) ...[
           const SizedBox(height: 8),
-          Builder(builder: (_) {
-            final raw = _amountCtrl.text.replaceAll(',', '').trim();
-            if (raw.isEmpty || raw == '0') return const SizedBox.shrink();
-            final base = int.tryParse(raw);
-            if (base == null || base <= 0) return const SizedBox.shrink();
-            // Generate suggestions: base × 1M, 10M, 100M, 1B (filter reasonable ones)
-            final suggestions = <double>[];
-            for (final multiplier in [1000000, 10000000, 100000000, 1000000000]) {
-              final val = base.toDouble() * multiplier;
-              if (val >= _minAmount * 0.5 && val <= _maxAmount * 1.5 && val != _selectedAmount) {
-                suggestions.add(val);
+          Builder(
+            builder: (_) {
+              final raw = _amountCtrl.text.replaceAll(',', '').trim();
+              if (raw.isEmpty || raw == '0') return const SizedBox.shrink();
+              final base = int.tryParse(raw);
+              if (base == null || base <= 0) return const SizedBox.shrink();
+              // Generate suggestions: base × 1M, 10M, 100M, 1B (filter reasonable ones)
+              final suggestions = <double>[];
+              for (final multiplier in [
+                1000000,
+                10000000,
+                100000000,
+                1000000000,
+              ]) {
+                final val = base.toDouble() * multiplier;
+                if (val >= _minAmount * 0.5 &&
+                    val <= _maxAmount * 1.5 &&
+                    val != _selectedAmount) {
+                  suggestions.add(val);
+                }
               }
-            }
-            if (suggestions.isEmpty) return const SizedBox.shrink();
-            return Wrap(
-              spacing: 8,
-              runSpacing: 6,
-              alignment: WrapAlignment.center,
-              children: suggestions.map((amt) => _buildSuggestionChip(amt)).toList(),
-            );
-          }),
+              if (suggestions.isEmpty) return const SizedBox.shrink();
+              return Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                alignment: WrapAlignment.center,
+                children: suggestions
+                    .map((amt) => _buildSuggestionChip(amt))
+                    .toList(),
+              );
+            },
+          ),
         ],
         const SizedBox(height: 12),
         // Range labels
@@ -876,8 +889,12 @@ class _PostListingScreenState extends State<PostListingScreen>
         Builder(
           builder: (context) {
             final isLoss = _profitAmount < 0;
-            final highlightBg = isLoss ? const Color(0xFFFFF0F0) : const Color(0xFFEBFEF1);
-            final barColor = isLoss ? const Color(0xFFE53935) : const Color(0xFF39B16B);
+            final highlightBg = isLoss
+                ? const Color(0xFFFFF0F0)
+                : const Color(0xFFEBFEF1);
+            final barColor = isLoss
+                ? const Color(0xFFE53935)
+                : const Color(0xFF39B16B);
             // Dynamic heights: based on (value - số tiền gửi gốc)
             // This shows the gain/loss above the deposit principal
             const maxH = 91.0;
@@ -885,211 +902,223 @@ class _PostListingScreenState extends State<PostListingScreen>
             final principal = _principal; // số tiền gửi gốc
             final deltaTransfer = (valTransfer - principal).abs();
             final deltaSettle = (valEarlySettle - principal).abs();
-            final maxDelta = deltaTransfer > deltaSettle ? deltaTransfer : deltaSettle;
+            final maxDelta = deltaTransfer > deltaSettle
+                ? deltaTransfer
+                : deltaSettle;
             final barSettleH = maxDelta > 0
-                ? (minH + (maxH - minH) * (deltaSettle / maxDelta)).clamp(minH, maxH)
+                ? (minH + (maxH - minH) * (deltaSettle / maxDelta)).clamp(
+                    minH,
+                    maxH,
+                  )
                 : maxH * 0.66;
             final barTransferH = maxDelta > 0
-                ? (minH + (maxH - minH) * (deltaTransfer / maxDelta)).clamp(minH, maxH)
+                ? (minH + (maxH - minH) * (deltaTransfer / maxDelta)).clamp(
+                    minH,
+                    maxH,
+                  )
                 : maxH;
 
             return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: highlightBg,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header: icon "Lời / Lỗ"
-              Builder(
-                builder: (context) {
-                  final profitStr = _formatShort(_profitAmount.abs());
-                  final accentColor = barColor;
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: accentColor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            isLoss
-                                ? Icons.trending_down_rounded
-                                : Icons.trending_up_rounded,
-                            size: 13,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: GoogleFonts.beVietnamPro(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              height: 18 / 12,
-                              color: AppTheme.textDark,
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: highlightBg,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header: icon "Lời / Lỗ"
+                  Builder(
+                    builder: (context) {
+                      final profitStr = _formatShort(_profitAmount.abs());
+                      final accentColor = barColor;
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: accentColor,
+                              shape: BoxShape.circle,
                             ),
-                            children: [
-                              TextSpan(text: isLoss ? 'Lỗ ' : 'Lời '),
-                              TextSpan(
-                                text: profitStr.contains('Tr')
-                                    ? profitStr
-                                    : '$profitStr ₫',
-                                style: GoogleFonts.beVietnamPro(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  height: 22 / 14,
-                                  color: accentColor,
-                                ),
+                            child: Center(
+                              child: Icon(
+                                isLoss
+                                    ? Icons.trending_down_rounded
+                                    : Icons.trending_up_rounded,
+                                size: 13,
+                                color: Colors.white,
                               ),
-                              TextSpan(
-                                text: ' ($_transferRateStr/năm)',
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
                                 style: GoogleFonts.beVietnamPro(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                   height: 18 / 12,
-                                  color: accentColor,
+                                  color: AppTheme.textDark,
+                                ),
+                                children: [
+                                  TextSpan(text: isLoss ? 'Lỗ ' : 'Lời '),
+                                  TextSpan(
+                                    text: profitStr.contains('Tr')
+                                        ? profitStr
+                                        : '$profitStr ₫',
+                                    style: GoogleFonts.beVietnamPro(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      height: 22 / 14,
+                                      color: accentColor,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' ($_transferRateStr/năm)',
+                                    style: GoogleFonts.beVietnamPro(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      height: 18 / 12,
+                                      color: accentColor,
+                                    ),
+                                  ),
+                                  const TextSpan(text: ' so với tất toán'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ── Preview section: labels+chart ──
+                  SizedBox(
+                    height: 103,
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        // Labels column (left)
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          right: 110,
+                          bottom: 0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Nếu chuyển nhượng',
+                                style: GoogleFonts.beVietnamPro(
+                                  fontSize: 10,
+                                  height: 14 / 10,
+                                  color: const Color(0xFF7A8DA3),
                                 ),
                               ),
-                              const TextSpan(text: ' so với tất toán'),
+                              const SizedBox(height: 2),
+                              const _DashedDivider(),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${_formatCurrency(valTransfer)} ₫',
+                                style: GoogleFonts.beVietnamPro(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 22 / 14,
+                                  color: const Color(0xFF01250F),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Nếu tất toán trước hạn',
+                                style: GoogleFonts.beVietnamPro(
+                                  fontSize: 10,
+                                  height: 14 / 10,
+                                  color: const Color(0xFF7A8DA3),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              const _DashedDivider(),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${_formatCurrency(valEarlySettle)} ₫',
+                                style: GoogleFonts.beVietnamPro(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 22 / 14,
+                                  color: const Color(0xFF01250F),
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // ── Preview section: labels+chart ──
-              SizedBox(
-                height: 103,
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    // Labels column (left)
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      right: 110,
-                      bottom: 0,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Nếu chuyển nhượng',
-                            style: GoogleFonts.beVietnamPro(
-                              fontSize: 10,
-                              height: 14 / 10,
-                              color: const Color(0xFF7A8DA3),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          const _DashedDivider(),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${_formatCurrency(valTransfer)} ₫',
-                            style: GoogleFonts.beVietnamPro(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              height: 22 / 14,
-                              color: const Color(0xFF01250F),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Nếu tất toán trước hạn',
-                            style: GoogleFonts.beVietnamPro(
-                              fontSize: 10,
-                              height: 14 / 10,
-                              color: const Color(0xFF7A8DA3),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          const _DashedDivider(),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${_formatCurrency(valEarlySettle)} ₫',
-                            style: GoogleFonts.beVietnamPro(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              height: 22 / 14,
-                              color: const Color(0xFF01250F),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Chart bars — dynamic
-                    Positioned(
-                      right: 0,
-                      bottom: 12,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Bar 1: tất toán (gray)
-                          Container(
-                            width: 40,
-                            height: barSettleH,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF7A8DA3).withValues(alpha: 0.25),
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(4),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          // Bar 2: chuyển nhượng (green/red + stripes)
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(4),
-                            ),
-                            child: SizedBox(
-                              width: 40,
-                              height: barTransferH,
-                              child: CustomPaint(
-                                painter: _DiagonalStripePainter(
-                                  barColor: barColor,
-                                  stripeColor: Colors.white.withValues(alpha: 0.10),
-                                  stripeWidth: 2.5,
-                                  stripeSpacing: 8.0,
+                        // Chart bars — dynamic
+                        Positioned(
+                          right: 0,
+                          bottom: 12,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Bar 1: tất toán (gray)
+                              Container(
+                                width: 40,
+                                height: barSettleH,
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFF7A8DA3,
+                                  ).withValues(alpha: 0.25),
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(4),
+                                  ),
                                 ),
                               ),
-                            ),
+                              const SizedBox(width: 4),
+                              // Bar 2: chuyển nhượng (green/red + stripes)
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(4),
+                                ),
+                                child: SizedBox(
+                                  width: 40,
+                                  height: barTransferH,
+                                  child: CustomPaint(
+                                    painter: _DiagonalStripePainter(
+                                      barColor: barColor,
+                                      stripeColor: Colors.white.withValues(
+                                        alpha: 0.10,
+                                      ),
+                                      stripeWidth: 2.5,
+                                      stripeSpacing: 8.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
+                  ),
+                  const SizedBox(height: 12),
 
-              // Ghi chú italic
-              Text(
-                'Thông tin tính toán dựa trên tham khảo biểu lãi suất tiền gửi hiện tại của MB',
-                style: GoogleFonts.beVietnamPro(
-                  fontSize: 10,
-                  fontStyle: FontStyle.italic,
-                  height: 14 / 10,
-                  color: const Color(0xFF7A8DA3),
-                ),
+                  // Ghi chú italic
+                  Text(
+                    'Thông tin tính toán dựa trên tham khảo biểu lãi suất tiền gửi hiện tại của MB',
+                    style: GoogleFonts.beVietnamPro(
+                      fontSize: 10,
+                      fontStyle: FontStyle.italic,
+                      height: 14 / 10,
+                      color: const Color(0xFF7A8DA3),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
+            );
           },
         ),
         const SizedBox(height: 12),
@@ -1446,9 +1475,9 @@ class _PostListingScreenState extends State<PostListingScreen>
                   child: Text(
                     suggestion,
                     style: GoogleFonts.beVietnamPro(
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      height: 22 / 14,
+                      height: 18 / 12,
                       color: AppTheme.textSecondary,
                     ),
                   ),
@@ -1501,17 +1530,18 @@ class _PostListingScreenState extends State<PostListingScreen>
               GestureDetector(
                 onTap: isEnabled
                     ? () async {
-                        final result = await Navigator.of(context).push<ConfigParams>(
-                          MaterialPageRoute(
-                            builder: (_) => ConfigParamsScreen(
-                              principal: _principal,
-                              originalRate: _currentRate,
-                              totalTermMonths: _totalTermMonths,
-                              remainingMonths: _remainingMonths,
-                              newOpeningRate: _newDepositRate,
-                            ),
-                          ),
-                        );
+                        final result = await Navigator.of(context)
+                            .push<ConfigParams>(
+                              MaterialPageRoute(
+                                builder: (_) => ConfigParamsScreen(
+                                  principal: _principal,
+                                  originalRate: _currentRate,
+                                  totalTermMonths: _totalTermMonths,
+                                  remainingMonths: _remainingMonths,
+                                  newOpeningRate: _newDepositRate,
+                                ),
+                              ),
+                            );
                         if (result != null && mounted) {
                           setState(() {
                             _principal = result.principal;
