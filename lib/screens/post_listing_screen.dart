@@ -413,7 +413,7 @@ class _PostListingScreenState extends State<PostListingScreen>
                       children: [
                         _BadgePill(label: term),
                         const SizedBox(width: 4),
-                        _BadgePillGreen(label: '${_currentRate}%/năm'),
+                        _BadgePillGreen(label: '$_currentRate%/năm'),
                       ],
                     ),
                   ],

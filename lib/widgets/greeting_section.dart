@@ -227,7 +227,7 @@ class _GreetingSectionState extends State<GreetingSection> {
                           width: 32,
                           height: 32,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
+                          errorBuilder: (_, error, stackTrace) => const Icon(
                             Icons.person,
                             size: 20,
                             color: Color(0xFF307A62),

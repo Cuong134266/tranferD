@@ -117,7 +117,7 @@ class _SearchScreenState extends State<SearchScreen> {
       case _Tab.aboveMarket:
         return [
           if (aboveMarket.isNotEmpty)
-            _Group('Hơn thị trường (≥${marketRate}%)', aboveMarket),
+            _Group('Hơn thị trường (≥$marketRate%)', aboveMarket),
         ];
       case _Tab.all:
         return [
